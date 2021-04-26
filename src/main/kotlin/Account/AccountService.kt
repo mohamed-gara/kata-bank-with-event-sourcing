@@ -1,21 +1,18 @@
 package Account
 
 class AccountService(
-    val accounts: Accounts // TODO use event store
+    private val movements: Movements
 ) {
     fun deposit(accountId: String, amount: Int) {
-
         val movement = Movement(amount, accountId)
-        accounts.append(movement)
+        movements.append(movement)
     }
 }
 
-class Accounts(
-    val events: MutableList<Movement> = mutableListOf()
+class Movements(
+    val movements: MutableList<Movement> = mutableListOf()
 ) {
-
     fun append(movement: Movement) {
-        events.add(movement)
+        movements.add(movement)
     }
-
 }
