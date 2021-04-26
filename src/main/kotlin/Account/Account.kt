@@ -1,20 +1,17 @@
 package Account
 
 class Account(
-  val accountId: String,
-  val events: List<Event> = listOf()
+    val accountId: String,
 ) {
-  fun addMovement(movement: Movement):  {
-    TODO("Not yet implemented")
-  }
+    fun addMovement(movement: Movement){
+        TODO("Not yet implemented")
+    }
 }
 
-class Movement(
-  val amount: Int
+data class Movement(
+    val amount: Int,
+    val accountId: String
 ) {
-  class Event {
-
-  }
 
 }
 

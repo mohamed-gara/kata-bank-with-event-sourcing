@@ -1,23 +1,21 @@
 package Account
 
 class AccountService(
-  val accounts: Accounts // TODO use event store
+    val accounts: Accounts // TODO use event store
 ) {
-  fun deposit(accountId: String, amount: Int) {
-    val account = accounts.findBy(accountId)
+    fun deposit(accountId: String, amount: Int) {
 
-    val updatedAccount = account.addMovement(Movement(amount))
-
-    accounts.save(updatedAccount)
-  }
+        val movement = Movement(amount, accountId)
+        accounts.append(movement)
+    }
 }
 
-class Accounts {
-  fun findBy(accountId: String): Account {
-    TODO("Not yet implemented")
-  }
+class Accounts(
+    val events: MutableList<Movement> = mutableListOf()
+) {
 
-  fun save(account: Account) {
-    TODO("Not yet implemented")
-  }
+    fun append(movement: Movement) {
+        events.add(movement)
+    }
+
 }
