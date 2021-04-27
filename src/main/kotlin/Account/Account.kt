@@ -9,8 +9,8 @@ class Account(
 }
 
 data class Movement(
-    val amount: Int,
-    val accountId: String
+    val accountId: String,
+    val amount: Int
 ) {
 
 }

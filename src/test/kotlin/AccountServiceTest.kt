@@ -18,19 +18,19 @@ internal class AccountServiceTest {
     sut.deposit(account_id_1, 100)
 
     assertThat(accounts.movements)
-      .containsExactly(Movement(100, account_id_1))
+      .containsExactly(Movement(account_id_1, 100))
   }
 
   @Test fun `deposit money amount in a non empty account`() {
 
-    accounts.movements.add(Movement(100, account_id_1))
+    accounts.movements.add(Movement(account_id_1, 100))
 
     sut.deposit(account_id_1, 230)
 
     assertThat(accounts.movements)
       .containsExactly(
-        Movement(100, account_id_1),
-        Movement(230, account_id_1)
+        Movement(account_id_1, 100),
+        Movement(account_id_1, 230)
       )
   }
 
@@ -41,8 +41,8 @@ internal class AccountServiceTest {
 
     assertThat(accounts.movements)
       .containsExactly(
-        Movement(100, account_id_1),
-        Movement(200, account_id_2)
+        Movement(account_id_1, 100),
+        Movement(account_id_2, 200)
       )
   }
 
@@ -53,8 +53,8 @@ internal class AccountServiceTest {
 
     assertThat(accounts.movements)
       .containsExactly(
-        Movement(100, account_id_1),
-        Movement(-50, account_id_1)
+        Movement(account_id_1, 100),
+        Movement(account_id_1, -50)
       )
   }
 
