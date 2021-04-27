@@ -45,4 +45,17 @@ internal class AccountServiceTest {
         Movement(200, account_id_2)
       )
   }
+
+  @Test fun `withdraw in a non empty account`(){
+    sut.deposit(account_id_1, 100)
+
+    sut.withdraw(account_id_1, 50)
+
+    assertThat(accounts.movements)
+      .containsExactly(
+        Movement(100, account_id_1),
+        Movement(-50, account_id_1)
+      )
+  }
+
 }

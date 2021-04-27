@@ -7,6 +7,11 @@ class AccountService(
         val movement = Movement(amount, accountId)
         movements.append(movement)
     }
+
+    fun withdraw(accountId: String, amount: Int) {
+        val movement = Movement(-amount, accountId)
+        movements.append(movement)
+    }
 }
 
 class Movements(
