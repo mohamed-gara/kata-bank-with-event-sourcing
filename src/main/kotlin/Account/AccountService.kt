@@ -12,6 +12,12 @@ class AccountService(
         val movement = Movement(accountId, -amount)
         movements.append(movement)
     }
+
+    fun balance(accountId: String): Int {
+        return movements.movements
+            .filter { it.accountId == accountId }
+            .sumOf { it.amount }
+    }
 }
 
 class Movements(
