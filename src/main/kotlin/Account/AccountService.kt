@@ -9,6 +9,8 @@ class AccountService(
     }
 
     fun withdraw(accountId: String, amount: Int) {
+        if (balance(accountId) < amount) return
+
         val movement = Movement(accountId, -amount)
         movements.append(movement)
     }

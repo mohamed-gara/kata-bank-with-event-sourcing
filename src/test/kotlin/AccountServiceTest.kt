@@ -70,30 +70,41 @@ internal class AccountServiceTest {
                 )
         }
 
-        @Test
-        fun `withdraw in empty account`() {
-            sut.withdraw(account_id_1, 50)
+        @Nested
+        inner class ForbiddenOperations {
+            @Test
+            fun `withdraw is forbidden if not enough money`() {
+                sut.withdraw(account_id_1, 50)
 
-            assertThat(accounts.movements)
-                .containsExactly(
-                    Movement(account_id_1, -50)
-                )
+                assertThat(accounts.movements).isEmpty()
+            }
+
+            @Test
+            fun `withdraw is forbidden if not enough money in user account`() {
+                sut.deposit(account_id_2, 50)
+
+                sut.withdraw(account_id_1, 50)
+
+                assertThat(accounts.movements)
+                    .containsExactly(
+                        Movement(account_id_2, 50),
+                    )
+            }
+
+            @Test
+            fun `withdraw is forbidden if no more money in user account after a first withdraw`() {
+                sut.deposit(account_id_1, 50)
+
+                sut.withdraw(account_id_1, 50)
+                sut.withdraw(account_id_1, 50)
+
+                assertThat(accounts.movements)
+                    .containsExactly(
+                        Movement(account_id_1, 50),
+                        Movement(account_id_1, -50),
+                    )
+            }
         }
-
-        @Test
-        fun `withdraw in two empty account`() {
-            sut.withdraw(account_id_1, 50)
-            sut.withdraw(account_id_2, 100)
-
-            assertThat(accounts.movements)
-                .containsExactly(
-                    Movement(account_id_1, -50),
-                    Movement(account_id_2, -100)
-                )
-
-        }
-
-
     }
 
     @Nested
