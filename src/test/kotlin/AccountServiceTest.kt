@@ -1,4 +1,5 @@
 import Account.AccountService
+import Account.Accounts
 import Account.Movement
 import Account.Movements
 import org.assertj.core.api.Assertions.assertThat
@@ -8,8 +9,9 @@ import org.junit.jupiter.api.Test
 
 internal class AccountServiceTest {
 
-    val accounts = Movements()
-    val sut = AccountService(accounts)
+    val movements = Movements()
+    val accounts = Accounts()
+    val sut = AccountService(movements, accounts)
 
     val account_id_1 = "account_id_1"
     val account_id_2 = "account_id_2"
@@ -22,18 +24,18 @@ internal class AccountServiceTest {
 
             sut.deposit(account_id_1, 100)
 
-            assertThat(accounts.movements)
+            assertThat(movements.movements)
                 .containsExactly(Movement(account_id_1, 100))
         }
 
         @Test
         fun `deposit in a non empty account`() {
 
-            accounts.movements.add(Movement(account_id_1, 100))
+            movements.movements.add(Movement(account_id_1, 100))
 
             sut.deposit(account_id_1, 230)
 
-            assertThat(accounts.movements)
+            assertThat(movements.movements)
                 .containsExactly(
                     Movement(account_id_1, 100),
                     Movement(account_id_1, 230)
@@ -46,7 +48,7 @@ internal class AccountServiceTest {
             sut.deposit(account_id_1, 100)
             sut.deposit(account_id_2, 200)
 
-            assertThat(accounts.movements)
+            assertThat(movements.movements)
                 .containsExactly(
                     Movement(account_id_1, 100),
                     Movement(account_id_2, 200)
@@ -63,7 +65,7 @@ internal class AccountServiceTest {
 
             sut.withdraw(account_id_1, 50)
 
-            assertThat(accounts.movements)
+            assertThat(movements.movements)
                 .containsExactly(
                     Movement(account_id_1, 100),
                     Movement(account_id_1, -50)
@@ -76,7 +78,7 @@ internal class AccountServiceTest {
             fun `withdraw is forbidden if not enough money`() {
                 sut.withdraw(account_id_1, 50)
 
-                assertThat(accounts.movements).isEmpty()
+                assertThat(movements.movements).isEmpty()
             }
 
             @Test
@@ -85,7 +87,7 @@ internal class AccountServiceTest {
 
                 sut.withdraw(account_id_1, 50)
 
-                assertThat(accounts.movements)
+                assertThat(movements.movements)
                     .containsExactly(
                         Movement(account_id_2, 50),
                     )
@@ -98,7 +100,7 @@ internal class AccountServiceTest {
                 sut.withdraw(account_id_1, 50)
                 sut.withdraw(account_id_1, 50)
 
-                assertThat(accounts.movements)
+                assertThat(movements.movements)
                     .containsExactly(
                         Movement(account_id_1, 50),
                         Movement(account_id_1, -50),
