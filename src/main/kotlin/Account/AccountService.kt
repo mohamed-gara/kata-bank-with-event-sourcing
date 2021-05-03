@@ -5,23 +5,24 @@ class AccountService(
     private val accounts: Accounts
 ) {
     fun deposit(accountId: String, amount: Int) {
-        val movement = Movement(accountId, amount)
-        movements.append(movement)
-        accounts.apply(movement)
+        val existingAccount = accounts.findBy(accountId)
+        val (updatedAccount, events) = existingAccount.deposit(amount)
+
+        accounts.save(updatedAccount)
+        movements.append(events)
     }
 
     fun withdraw(accountId: String, amount: Int) {
-        if (balance(accountId) < amount) return
+        val existingAccount = accounts.findBy(accountId)
+        val (updatedAccount, events) = existingAccount.withdraw(amount)
 
-        val movement = Movement(accountId, -amount)
-        movements.append(movement)
-        accounts.apply(movement)
+        if (events.isEmpty()) return
+
+        accounts.save(updatedAccount)
+        movements.append(events)
     }
 
-    fun balance(accountId: String): Int {
-        val account = accounts.findBy(accountId)
-        return account.balance
-    }
+    fun balance(accountId: String): Int = accounts.findBy(accountId).balance
 }
 
 class Movements(
@@ -29,6 +30,10 @@ class Movements(
 ) {
     fun append(movement: Movement) {
         movements.add(movement)
+    }
+
+    fun append(movements: List<Movement>) {
+        this.movements.addAll(movements)
     }
 }
 
@@ -42,11 +47,4 @@ class Accounts(
     fun save(account: Account) {
         accounts[account.accountId] = account
     }
-
-    fun apply(movement: Movement) {
-        val account = findBy(movement.accountId)
-        val updatedAccount = account.updateBalance(movement.amount)
-        save(updatedAccount);
-    }
-
 }
