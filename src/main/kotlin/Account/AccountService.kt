@@ -1,10 +1,15 @@
 package Account
 
+// TODO:
+// version 2.2 : save events in aggregate ???
+// version 2.3 : use event dispatcher
+// version 3 : update read model on write asynchronously
 class AccountService(
     private val movements: Movements,
     private val accounts: Accounts
 ) {
     fun deposit(accountId: String, amount: Int) {
+
         val existingAccount = accounts.findBy(accountId)
         val (updatedAccount, events) = existingAccount.deposit(amount)
 
