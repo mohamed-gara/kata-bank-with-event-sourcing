@@ -1,32 +1,28 @@
 package Account
 
-typealias CommandResult<T> = Pair<T, List<Movement>>
-
 data class Account(
-    val accountId: String,
-    val balance: Int
+  val accountId: String,
+  val balance: Int,
+
+  val movements: List<Movement>
 ) {
-    fun deposit(amount: Int): CommandResult<Account> {
-        val updateAccount = updateBalance(amount)
-        val movement = Movement(accountId, amount)
-        return CommandResult(updateAccount, listOf(movement))
-    }
+  fun deposit(amount: Int): Account = updateBalance(amount)
 
-    fun withdraw(amount: Int): CommandResult<Account> {
-        if (balance < amount) return Pair(this, listOf())
+  fun withdraw(amount: Int): Account {
+    if (balance < amount) return this
 
-        val updateAccount = updateBalance(-amount)
-        val movement = Movement(accountId, -amount)
-        return Pair(updateAccount, listOf(movement))
-    }
+    return updateBalance(-amount)
+  }
 
-    private fun updateBalance(amount: Int): Account =
-        Account(this.accountId, this.balance + amount)
+  private fun updateBalance(amount: Int): Account =
+    copy(
+      balance = this.balance + amount,
+      movements = this.movements + Movement(amount)
+    )
 }
 
 data class Movement(
-    val accountId: String,
-    val amount: Int
+  val amount: Int
 ) {
 
 }
