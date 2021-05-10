@@ -1,6 +1,4 @@
-import Account.AccountService
-import Account.Accounts
-import Account.Movement
+import Account.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -8,8 +6,9 @@ import org.junit.jupiter.api.Test
 
 internal class AccountServiceTest {
 
+  val store = EventStore()
   val accounts = Accounts()
-  val sut = AccountService(accounts)
+  val sut = AccountService(accounts, store)
 
   val account_id_1 = "account_id_1"
   val account_id_2 = "account_id_2"
