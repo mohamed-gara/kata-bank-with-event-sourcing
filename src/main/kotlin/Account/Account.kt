@@ -4,7 +4,7 @@ data class Account(
   val accountId: String,
   val balance: Int,
 
-  val movements: List<Movement>
+  val movements: List<Movement> // TODO not part of read model
 ) {
   fun deposit(amount: Int): Account = updateBalance(amount)
 

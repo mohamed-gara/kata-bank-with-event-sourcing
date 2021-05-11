@@ -8,6 +8,7 @@ internal class AccountServiceTest {
 
   val store = EventStore()
   val accounts = Accounts()
+  val calculator = BalanceCalculator(store, accounts)
   val sut = AccountService(accounts, store)
 
   val account_id_1 = "account_id_1"

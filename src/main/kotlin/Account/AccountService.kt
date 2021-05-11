@@ -12,26 +12,23 @@ class AccountService(
         val event = MovementEvent(accountId, Movement(amount))
         store.append(event)
 
-        val existingAccount = accounts.findBy(accountId)
-        val updatedAccount = existingAccount.deposit(amount)
-
-        accounts.save(updatedAccount)
     }
 
     fun withdraw(accountId: String, amount: Int) {
         val existingAccount = accounts.findBy(accountId)
-        val updatedAccount = existingAccount.withdraw(amount)
 
-        if (existingAccount === updatedAccount) return
+        if (existingAccount.balance < amount) return
 
-        accounts.save(updatedAccount)
+        val event = MovementEvent(accountId, Movement(-amount))
+        store.append(event)
+
     }
 
     fun balance(accountId: String): Int =
         accounts.findBy(accountId).balance
 
     fun findMovements(accountId: String): List<Movement> =
-        accounts.findBy(accountId).movements
+        store.movementsBy(accountId)
 }
 
 class Accounts(
@@ -63,16 +60,31 @@ class EventStore(
 
     private fun dispatch(event: MovementEvent) {
         listeners.forEach {
-            it.apply { event }
+            it.apply { event } // TODO: why it does not call BalanceCalculator#updateBalance ?
         }
     }
+
+    fun movementsBy(accountId: String): List<Movement> =
+        events.filter { it.accountId == accountId }
+            .map { it.movement }
+
 }
 
 
 class BalanceCalculator(
-    private val store: EventStore
+    private val store: EventStore,
+    private val accounts: Accounts
 ) {
-    // TODO implement
+
+    init {
+        this.store.register(::updateBalance)
+    }
+
+    private fun updateBalance(event: MovementEvent) {
+        val currentAccount = this.accounts.findBy(event.accountId)
+        val updatedAccount = currentAccount.copy(balance = currentAccount.balance + event.movement.amount)
+        accounts.save(updatedAccount)
+    }
 }
 
 data class MovementEvent(
