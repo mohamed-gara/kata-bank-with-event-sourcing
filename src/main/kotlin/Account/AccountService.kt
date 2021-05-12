@@ -60,7 +60,7 @@ class EventStore(
 
     private fun dispatch(event: MovementEvent) {
         listeners.forEach {
-            it.apply { event } // TODO: why it does not call BalanceCalculator#updateBalance ?
+            it.apply { this(event) } // TODO: why it does not call BalanceCalculator#updateBalance ?
         }
     }
 
