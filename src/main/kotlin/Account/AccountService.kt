@@ -1,7 +1,13 @@
 package Account
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
 // TODO:
-// version 3 : update read model on write asynchronously
+// version 3 : update read model on write asynchronously TODO
+// version 3.0.1: use async for dispatchAsync
+// version 3.1: rehydrate aggregate for computing balance on the fly
 class AccountService(
     private val accounts: Accounts,
     private val store: EventStore
@@ -41,20 +47,26 @@ class Accounts(
     }
 }
 
-
 typealias EventListener = (MovementEvent) -> Unit
 
 class EventStore(
     private val events: MutableList<MovementEvent> = mutableListOf(),
     private val listeners: MutableList<EventListener> = mutableListOf()
 ) {
-    fun append(event: MovementEvent) {
+    fun append(event: MovementEvent) = runBlocking{
         events.add(event)
-        dispatch(event)
+        launch {
+            dispatchAsync(event)
+        }
     }
 
     fun register(listener: EventListener) {
         listeners.add(listener)
+    }
+
+    suspend fun dispatchAsync(event: MovementEvent) {
+        delay(1000L)
+        dispatch(event)
     }
 
     private fun dispatch(event: MovementEvent) {
