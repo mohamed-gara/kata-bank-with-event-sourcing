@@ -1,7 +1,6 @@
 package Account
 
 // TODO:
-// version 2.3 : use event dispatcher
 // version 3 : update read model on write asynchronously
 class AccountService(
     private val accounts: Accounts,
@@ -35,7 +34,7 @@ class Accounts(
     private val accounts: MutableMap<String, Account> = mutableMapOf()
 ) {
     fun findBy(accountId: String): Account =
-        accounts[accountId] ?: Account(accountId, 0, listOf())
+        accounts[accountId] ?: Account(accountId, 0)
 
     fun save(account: Account) {
         accounts[account.accountId] = account
@@ -60,7 +59,7 @@ class EventStore(
 
     private fun dispatch(event: MovementEvent) {
         listeners.forEach {
-            it.apply { this(event) } // TODO: why it does not call BalanceCalculator#updateBalance ?
+            it.apply { this(event) }
         }
     }
 
@@ -72,15 +71,10 @@ class EventStore(
 
 
 class BalanceCalculator(
-    private val store: EventStore,
     private val accounts: Accounts
 ) {
 
-    init {
-        this.store.register(::updateBalance)
-    }
-
-    private fun updateBalance(event: MovementEvent) {
+    fun updateBalance(event: MovementEvent) {
         val currentAccount = this.accounts.findBy(event.accountId)
         val updatedAccount = currentAccount.copy(balance = currentAccount.balance + event.movement.amount)
         accounts.save(updatedAccount)

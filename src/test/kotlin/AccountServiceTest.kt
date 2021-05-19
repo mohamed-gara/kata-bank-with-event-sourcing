@@ -1,5 +1,6 @@
 import Account.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -8,11 +9,17 @@ internal class AccountServiceTest {
 
   val store = EventStore()
   val accounts = Accounts()
-  val calculator = BalanceCalculator(store, accounts)
+
   val sut = AccountService(accounts, store)
 
   val account_id_1 = "account_id_1"
   val account_id_2 = "account_id_2"
+
+  @BeforeEach
+  fun setUp(){
+    val balanceCalculator = BalanceCalculator(accounts)
+    store.register(balanceCalculator::updateBalance)
+  }
 
   @Nested
   inner class Deposit {
