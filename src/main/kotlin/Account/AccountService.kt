@@ -1,11 +1,10 @@
 package Account
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
 // TODO:
-// version 3 : update read model on write asynchronously TODO
+// version 3 : update read model on write asynchronously WIP
+// Fix test with deposit sync for test (define interface)
+// Add test for asynchronous ?
+
 // version 3.0.1: use async for dispatchAsync
 // version 3.1: rehydrate aggregate for computing balance on the fly
 class AccountService(
@@ -53,20 +52,19 @@ class EventStore(
     private val events: MutableList<MovementEvent> = mutableListOf(),
     private val listeners: MutableList<EventListener> = mutableListOf()
 ) {
-    fun append(event: MovementEvent) = runBlocking{
+    fun append(event: MovementEvent) {
         events.add(event)
-        launch {
-            dispatchAsync(event)
-        }
+        dispatchAsync(event)
     }
 
     fun register(listener: EventListener) {
         listeners.add(listener)
     }
 
-    suspend fun dispatchAsync(event: MovementEvent) {
-        delay(1000L)
-        dispatch(event)
+    fun dispatchAsync(event: MovementEvent) {
+        Thread {
+            dispatch(event)
+        }.start()
     }
 
     private fun dispatch(event: MovementEvent) {

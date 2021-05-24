@@ -1,4 +1,5 @@
 import Account.*
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -26,8 +27,8 @@ internal class AccountServiceTest {
 
     @Test
     fun `deposit in an empty account`() {
-
       sut.deposit(account_id_1, 100)
+
       val movements = sut.findMovements(account_id_1)
 
       assertThat(movements)
@@ -71,6 +72,7 @@ internal class AccountServiceTest {
       sut.deposit(account_id_1, 100)
 
       sut.withdraw(account_id_1, 50)
+
       val movements = sut.findMovements(account_id_1)
 
       assertThat(movements)
