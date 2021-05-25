@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test
 
 internal class AccountServiceTest {
 
-  val store = EventStore()
+  val eventDispatcher = EventDispatcherSync()
+  val store = EventStore(eventDispatcher=eventDispatcher)
   val accounts = Accounts()
 
   val sut = AccountService(accounts, store)

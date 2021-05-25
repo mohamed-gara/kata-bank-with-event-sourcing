@@ -1,5 +1,7 @@
 package Account
 
+import kotlinx.coroutines.runBlocking
+
 // TODO:
 // version 3 : update read model on write asynchronously WIP
 // Fix test with deposit sync for test (define interface)
@@ -50,27 +52,15 @@ typealias EventListener = (MovementEvent) -> Unit
 
 class EventStore(
     private val events: MutableList<MovementEvent> = mutableListOf(),
-    private val listeners: MutableList<EventListener> = mutableListOf()
+    private val eventDispatcher: EventDispatcher
 ) {
-    fun append(event: MovementEvent) {
+    fun append(event: MovementEvent) = runBlocking{
         events.add(event)
-        dispatchAsync(event)
+        eventDispatcher.dispatch(event)
     }
 
     fun register(listener: EventListener) {
-        listeners.add(listener)
-    }
-
-    fun dispatchAsync(event: MovementEvent) {
-        Thread {
-            dispatch(event)
-        }.start()
-    }
-
-    private fun dispatch(event: MovementEvent) {
-        listeners.forEach {
-            it.apply { this(event) }
-        }
+        eventDispatcher.register(listener)
     }
 
     fun movementsBy(accountId: String): List<Movement> =
@@ -95,5 +85,44 @@ data class MovementEvent(
     val accountId: String,
     val movement: Movement
 ) {
+
+}
+
+interface EventDispatcher {
+    fun dispatch(movement: MovementEvent)
+
+    fun register(listener: EventListener)
+}
+
+class EventDispatcherSync(
+    private val listeners: MutableList<EventListener> = mutableListOf()
+) : EventDispatcher {
+
+    override fun dispatch(event: MovementEvent) {
+        listeners.forEach {
+            it.apply { this(event) }
+        }
+    }
+    override fun register(listener: EventListener) {
+        listeners.add(listener)
+    }
+
+}
+
+class EventDispatcherAsync(
+    private val listeners: MutableList<EventListener> = mutableListOf()
+) : EventDispatcher {
+
+    override fun dispatch(event: MovementEvent) {
+        Thread {
+            listeners.forEach {
+                it.apply { this(event) }
+            }
+        }.start()
+    }
+
+    override fun register(listener: EventListener) {
+        listeners.add(listener)
+    }
 
 }
