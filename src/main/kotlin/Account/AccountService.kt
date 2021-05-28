@@ -3,10 +3,6 @@ package Account
 import kotlinx.coroutines.runBlocking
 
 // TODO:
-// version 3 : update read model on write asynchronously WIP
-// Fix test with deposit sync for test (define interface)
-// Add test for asynchronous ?
-
 // version 3.0.1: use async for dispatchAsync
 // version 3.1: rehydrate aggregate for computing balance on the fly
 class AccountService(
@@ -114,6 +110,7 @@ class EventDispatcherAsync(
 ) : EventDispatcher {
 
     override fun dispatch(event: MovementEvent) {
+        Thread.sleep(500)
         Thread {
             listeners.forEach {
                 it.apply { this(event) }
