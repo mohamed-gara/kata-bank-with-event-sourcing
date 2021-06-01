@@ -120,11 +120,9 @@ internal class AccountServiceTest {
     }
   }
 
-  @Nested
-  inner class Balance {
+  @Nested inner class Balance {
 
-    @Test
-    fun `balance is 10 after one deposit of 10`() {
+    @Test fun `balance is 10 after one deposit of 10`() {
       sut.deposit(account_id_1, 10)
 
       val result = sut.balance(account_id_1)
@@ -132,8 +130,7 @@ internal class AccountServiceTest {
       assertThat(result).isEqualTo(10)
     }
 
-    @Test
-    fun `balance is 30 after two deposit of 10 and 20 in the same account`() {
+    @Test fun `balance is 30 after two deposit of 10 and 20 in the same account`() {
       sut.deposit(account_id_1, 10)
       sut.deposit(account_id_1, 20)
 
@@ -142,14 +139,28 @@ internal class AccountServiceTest {
       assertThat(result).isEqualTo(30)
     }
 
-    @Test
-    fun `balance is 20 in the second account after deposit of 10 in a first account and 20 in a second account`() {
+    @Test fun `balance is 20 in the second account after deposit of 10 in a first account and 20 in a second account`() {
       sut.deposit(account_id_1, 10)
       sut.deposit(account_id_2, 20)
 
       val result = sut.balance(account_id_2)
 
       assertThat(result).isEqualTo(20)
+    }
+  }
+
+  @Nested inner class `search accounts` {
+
+    @Test fun `by balance`() {
+      sut.deposit(account_id_1, 20)
+      sut.deposit(account_id_2, 5)
+
+      val result = sut.findWithBalanceBetween(0, 10)
+
+      assertThat(result)
+        .containsExactly(
+          Account(account_id_2, 5)
+        )
     }
   }
 }
