@@ -1,4 +1,4 @@
-package Account
+package account
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

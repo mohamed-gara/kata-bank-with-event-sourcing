@@ -1,5 +1,5 @@
-import Account.*
-import kotlinx.coroutines.runBlocking
+package account
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -14,6 +14,7 @@ internal class AccountServiceTest {
 
   val sut = AccountService(accounts, store)
 
+  val user_id_1 = "user_id_1"
   val account_id_1 = "account_id_1"
   val account_id_2 = "account_id_2"
 
@@ -22,6 +23,8 @@ internal class AccountServiceTest {
     val balanceCalculator = BalanceCalculator(accounts)
     store.register(balanceCalculator::updateBalance)
   }
+
+
 
   @Nested
   inner class Deposit {
@@ -163,4 +166,6 @@ internal class AccountServiceTest {
         )
     }
   }
+
+
 }

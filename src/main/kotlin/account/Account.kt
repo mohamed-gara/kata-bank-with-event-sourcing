@@ -1,4 +1,4 @@
-package Account
+package account
 
 data class Account(
   val accountId: String,
