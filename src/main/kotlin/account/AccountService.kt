@@ -33,6 +33,10 @@ class AccountService(
 
     fun findWithBalanceBetween(min: Int, max: Int): Collection<Account> =
         accounts.findWithBalanceBetween(min, max)
+
+    fun deposit(userId: String, accountId: String, amount: Int) {
+        deposit(accountId, amount)
+    }
 }
 
 class Accounts(
@@ -42,7 +46,7 @@ class Accounts(
         accounts[accountId] ?: Account(accountId, 0)
 
     fun save(account: Account) {
-        accounts[account.accountId] = account
+        accounts[account.id] = account
     }
 
     fun findWithBalanceBetween(min: Int, max: Int): Collection<Account> = accounts.values.filter {

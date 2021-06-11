@@ -10,11 +10,13 @@ internal class AccountServiceTest {
 
   val eventDispatcher = EventDispatcherSync()
   val store = EventStore(eventDispatcher=eventDispatcher)
+  val users = Users()
   val accounts = Accounts()
 
+  val userService = UserService(users)
   val sut = AccountService(accounts, store)
 
-  val user_id_1 = "user_id_1"
+
   val account_id_1 = "account_id_1"
   val account_id_2 = "account_id_2"
 
@@ -31,10 +33,11 @@ internal class AccountServiceTest {
 
     @Test
     fun `deposit in an empty account`() {
-      sut.deposit(account_id_1, 100)
+      val userId = userService.create("Le petit Omar")
+
+      sut.deposit(userId, account_id_1, 100)
 
       val movements = sut.findMovements(account_id_1)
-
       assertThat(movements)
         .containsExactly(Movement( 100))
     }

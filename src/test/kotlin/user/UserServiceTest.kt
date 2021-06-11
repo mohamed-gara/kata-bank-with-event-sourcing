@@ -4,6 +4,7 @@ import account.User
 import account.UserService
 import account.Users
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
@@ -14,7 +15,7 @@ internal class UserServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings=["Le petit Omar", "Le petit Silvère"])
-    fun `create a user`(userName: String) {
+    fun `create and find a user`(userName: String) {
         val userId = sut.create(userName)
 
         val user = sut.findBy(userId)
@@ -22,6 +23,13 @@ internal class UserServiceTest {
         assertThat(user).isEqualTo(
             User(userId, userName)
         )
+    }
+
+    @Test
+    fun `find an unknown user`(){
+        val result = sut.findBy("Le petit Mohamed")
+
+        assertThat(result).isNull()
     }
 }
 

@@ -1,9 +1,15 @@
 package account
 
 data class Account(
-  val accountId: String,
+  val id: String,
   val balance: Int,
 ) {
+
+}
+
+data class AccountId(
+  private val id: String
+){
 
 }
 
